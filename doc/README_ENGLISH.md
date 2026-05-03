@@ -24,7 +24,7 @@ Download [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) and install
 So how do you get the middleware on your Raspberry Pi? Just log in to your Raspberry Pi and execute the following commands. Note that you will need root user permissions to get these steps done.
 
 ```
-$ curl -O https://raw.githubusercontent.com/infiniteloop-inc/crystal-signal/master/install.sh
+$ curl -O https://raw.githubusercontent.com/8yazaki-ai/crystal-signal/master/install.sh
 $ sudo bash install.sh
 ```
 
@@ -46,7 +46,7 @@ We are still adding new features to the Crystal Signal Pi middleware.
 If you want to update to a newer version, just run these commands on your Raspberry Pi.
 
 ```
-$ curl -O https://raw.githubusercontent.com/infiniteloop-inc/crystal-signal/master/install.sh
+$ curl -O https://raw.githubusercontent.com/8yazaki-ai/crystal-signal/master/install.sh
 $ sudo bash install.sh update
 ```
 

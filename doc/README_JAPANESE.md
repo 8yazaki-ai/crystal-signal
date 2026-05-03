@@ -26,7 +26,7 @@ Raspberry Pi上で以下のコマンドを実行してください。インス�
 *(2016/12/14 追記) 従来はOSのアップデートを同時に行っていましたが、初回インストールに時間がかかりすぎるため、デフォルトの動作を変更しました。従来通りOSアップデートとインストールを同時に行いたい場合は、下記のfullinstallを利用してください。*
 
 ```
-$ curl -O https://raw.githubusercontent.com/infiniteloop-inc/crystal-signal/master/install.sh
+$ curl -O https://raw.githubusercontent.com/8yazaki-ai/crystal-signal/master/install.sh
 $ sudo bash install.sh
 ```
 
@@ -43,7 +43,7 @@ $ sudo bash install.sh fullinstall
 より新しいミドルウェアがリリースされた場合は、Raspberry Pi上で以下のコマンドを実行してください。ミドルウェアのみが最新にアップデートされます。
 
 ```
-$ curl -O https://raw.githubusercontent.com/infiniteloop-inc/crystal-signal/master/install.sh
+$ curl -O https://raw.githubusercontent.com/8yazaki-ai/crystal-signal/master/install.sh
 $ sudo bash install.sh update
 ```
 
