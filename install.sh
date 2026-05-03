@@ -118,7 +118,17 @@ function set_timezone
 function install_pigpiod
 {
     apt_update
-    $APT install -y pigpio python-pigpio
+    # pigpioはDebian Bookworm/Trixie以降ではaptから利用できないためソースからビルドする
+    if ! $APT install -y pigpio python3-pigpio 2>/dev/null; then
+        $APT install -y git build-essential
+        rm -rf /tmp/pigpio-build
+        git clone https://github.com/joan2937/pigpio.git /tmp/pigpio-build
+        make -C /tmp/pigpio-build
+        make -C /tmp/pigpio-build install
+        $SYSTEMCTL daemon-reload
+        pip3 install pigpio --break-system-packages 2>/dev/null || pip3 install pigpio 2>/dev/null || true
+        rm -rf /tmp/pigpio-build
+    fi
     $SYSTEMCTL enable pigpiod.service
     $SYSTEMCTL restart pigpiod.service
 }
@@ -198,7 +208,7 @@ function install_crystalsignal
 
     $RM $TEMP
 
-    $WGET -O ${WORKDIR}/crystal-signal.tar.gz "https://github.com/infiniteloop-inc/crystal-signal/archive/${SERVERVER}.tar.gz"
+    $WGET -O ${WORKDIR}/crystal-signal.tar.gz "https://github.com/8yazaki-ai/crystal-signal/archive/${SERVERVER}.tar.gz"
 
     $TAR xf ${WORKDIR}/crystal-signal.tar.gz -C $WORKDIR
 
