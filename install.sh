@@ -125,9 +125,23 @@ function install_pigpiod
         git clone https://github.com/joan2937/pigpio.git /tmp/pigpio-build
         make -C /tmp/pigpio-build
         make -C /tmp/pigpio-build install
-        $SYSTEMCTL daemon-reload
         pip3 install pigpio --break-system-packages 2>/dev/null || pip3 install pigpio 2>/dev/null || true
         rm -rf /tmp/pigpio-build
+        # ソースビルド時はsystemdサービスファイルが作成されないため手動で作成する
+        if [ ! -f /lib/systemd/system/pigpiod.service ]; then
+            cat > /lib/systemd/system/pigpiod.service <<EOF
+[Unit]
+Description=Daemon required to control GPIO pins via pigpio
+
+[Service]
+ExecStart=/usr/local/bin/pigpiod -l
+ExecStop=/bin/systemctl kill pigpiod
+
+[Install]
+WantedBy=multi-user.target
+EOF
+        fi
+        $SYSTEMCTL daemon-reload
     fi
     $SYSTEMCTL enable pigpiod.service
     $SYSTEMCTL restart pigpiod.service
