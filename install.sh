@@ -277,10 +277,13 @@ EOF
     $CAT > /etc/systemd/system/LEDController.service <<EOF
 [Unit]
 Description=LED Controller
+Requires=pigpiod.service
 After=pigpiod.service
 
 [Service]
 ExecStart=/usr/local/bin/LEDController.py
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
