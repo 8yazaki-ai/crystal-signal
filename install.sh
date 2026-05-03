@@ -132,10 +132,11 @@ function install_pigpiod
             cat > /lib/systemd/system/pigpiod.service <<EOF
 [Unit]
 Description=Daemon required to control GPIO pins via pigpio
+After=network.target
 
 [Service]
+Type=forking
 ExecStart=/usr/local/bin/pigpiod -l
-ExecStop=/bin/systemctl kill pigpiod
 
 [Install]
 WantedBy=multi-user.target
