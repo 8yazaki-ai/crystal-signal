@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 import os
@@ -56,7 +56,7 @@ class SpeakMessageController:
     def createAndPlayAudio(self, audioString, voiceName, language):
         if language == 'japanese':
             voicePath = self.getFullFilePath(voiceName)
-            print voicePath
+            print(voicePath)
             args = ["open_jtalk", 
                     "-m", voicePath, 
                     "-x", "/var/lib/mecab/dic/open-jtalk/naist-jdic", 

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 import os
@@ -62,45 +62,45 @@ class ButtonController:
             # Write here code that will be executed When the Button is pressed long & the current AckStatus is True
             # and we need to test one more thing
             scriptName = settings['dropdown3']
-            if scriptName is not "---" and scriptName in availableScriptNames:
+            if scriptName != "---" and scriptName in availableScriptNames:
                 try:
                     txt = path + scriptName
                     subprocess.Popen(txt)
                 except:
-                    print 'cannot open', scriptName
+                    print('cannot open', scriptName)
         else:
-            # Write here code that will be executed When the Button is pressed long & the current AckStatus is False 
+            # Write here code that will be executed When the Button is pressed long & the current AckStatus is False
             scriptName = settings['dropdown4']
-            if scriptName is not "---" and scriptName in availableScriptNames:
+            if scriptName != "---" and scriptName in availableScriptNames:
                 try:
                     txt = path + scriptName
                     subprocess.Popen(txt)
                 except:
-                    print 'cannot open', scriptName
+                    print('cannot open', scriptName)
 
     def shortPress(self):
         path = "/var/lib/crystal-signal/scripts/"
-        print "short press!"
+        print("short press!")
         settings = self.getButtonSettings()
         availableScriptNames = self.getScriptNames()
         if self.ackStatus:
             # Write here code that will be executed When the Button is pressed short & the current AckStatus is True
             scriptName = settings['dropdown1']
-            if scriptName is not "---" and scriptName in availableScriptNames:
+            if scriptName != "---" and scriptName in availableScriptNames:
                 try:
                     txt = path + scriptName
                     subprocess.Popen(txt)
                 except:
-                    print 'cannot open', scriptName
+                    print('cannot open', scriptName)
         else:
-            # Write here code that will be executed When the Button is pressed short & the current AckStatus is False 
+            # Write here code that will be executed When the Button is pressed short & the current AckStatus is False
             scriptName = settings['dropdown2']
-            if scriptName is not "---" and scriptName in availableScriptNames:
+            if scriptName != "---" and scriptName in availableScriptNames:
                 try:
                     txt = path + scriptName
                     subprocess.Popen(txt)
                 except:
-                    print 'cannot open', scriptName
+                    print('cannot open', scriptName)
 
     def getButtonSettings(self):
         path = "/var/lib/crystal-signal/ScriptSettings.json"

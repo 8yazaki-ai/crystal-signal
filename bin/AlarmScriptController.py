@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 import os
@@ -20,12 +20,12 @@ class AlarmScriptController:
         settings = self.getScriptSettings()
         availableScriptNames = self.getScriptNames()
         scriptName = settings['dropdown5']
-        if scriptName is not "---" and scriptName in availableScriptNames:
+        if scriptName != "---" and scriptName in availableScriptNames:
             try:
                 txt = path + scriptName
                 subprocess.Popen(txt)
             except:
-                print 'cannot open', scriptName
+                print('cannot open', scriptName)
     def getScriptSettings(self):
         path = "/var/lib/crystal-signal/ScriptSettings.json"
         if not isfile(path):

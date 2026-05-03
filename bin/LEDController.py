@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 import sys  
@@ -6,11 +6,11 @@ import math
 import time
 import json
 import pigpio
-import urllib
+import urllib.parse
 import random
 import datetime
 import threading
-import SocketServer
+import socketserver
 import os
 from ButtonController import ButtonController
 from AlarmScriptController import AlarmScriptController
@@ -19,14 +19,14 @@ from SpeakMessageController import SpeakMessageController
 # - - - - - - - - - - - - - - - -
 # - - - - SOCKET CLASSES  - - - -
 # - - - - - - - - - - - - - - - -
-class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
+class ThreadedTCPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         data = self.request.recv(1024)
-        ledCtrl.updateStatus(data)
+        ledCtrl.updateStatus(data.decode('utf-8'))
         response = ledCtrl.getStatus()
-        self.request.sendall(response)
+        self.request.sendall(response.encode('utf-8'))
 
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
 # - - - - - - - - - - - - - - - -
@@ -84,7 +84,7 @@ class LEDController:
         self.queryString = query_string
         self.argList=query_string.split('&')
         for arg in self.argList:
-            if arg is not "":
+            if arg != "":
                 key, value=arg.split('=')
                 key = key.lower()
                 if key == 'ack':
@@ -130,7 +130,7 @@ class LEDController:
                 key = key.lower()
                 if key in self.statusDict:
                     if key == 'color':
-                        valueArr = urllib.unquote(value).split(',')
+                        valueArr = urllib.parse.unquote(value).split(',')
                         for index, element in enumerate(valueArr):
                             self.statusDict['color'][index] = int(element)
                     else:
@@ -156,8 +156,8 @@ class LEDController:
                 self.alarmScriptController.executeAlarmScript()
 
     def speakIfNecessary(self):
-        speakMsg = urllib.unquote(str(self.statusDict['speak']))
-        if speakMsg is not "":
+        speakMsg = urllib.parse.unquote(str(self.statusDict['speak']))
+        if speakMsg != "":
             language = self.getLanguageSetting()
             self.speakMsgController.createAndPlayAudio(speakMsg, self.getVoiceSetting(language), language)
 
@@ -300,10 +300,10 @@ class LEDController:
                     </thead>
                     <tbody>'''
         for ent in self.logList:
-            info = urllib.unquote(str(ent['info']))
+            info = urllib.parse.unquote(str(ent['info']))
             argList = ""
             for key in self.listOfKeys:
-                argList += key + ": " + urllib.unquote(str(ent[key])) + "<br>\r\n"
+                argList += key + ": " + urllib.parse.unquote(str(ent[key])) + "<br>\r\n"
             html += '<tr class="{0}">'.format("danger" if (ent['ack'] == 0) else "success")
             html += "<td>" + ent['date'] + "</td>"
             html += "<td>" + ent['remote_addr'] + "</td>"
@@ -353,7 +353,7 @@ class LEDController:
         for ent in keyList:    # There are 5 DropDown Buttons.
             html =  ''' <div class="dropdown">
                             <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" name="dropDown1">'''
-            html +=         urllib.unquote(settings[ent]) + '''<span class="caret"></span></button>
+            html +=         urllib.parse.unquote(settings[ent]) + '''<span class="caret"></span></button>
                             <ul class="dropdown-menu">'''
             for entry in scriptFileNames:
                 html +=     '<li><a href="#">' + entry + '</a></li>'
@@ -369,7 +369,7 @@ class LEDController:
         currentLanguage = self.getLanguageSetting()
         html =  ''' <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" name="dropDown1">'''
-        html +=         urllib.unquote(currentLanguage) + '''<span class="caret"></span></button>
+        html +=         urllib.parse.unquote(currentLanguage) + '''<span class="caret"></span></button>
                         <ul class="dropdown-menu">'''
         for entry in availableLanguages:
             html +=     '<li><a href="#">' + entry + '</a></li>'
@@ -392,7 +392,7 @@ class LEDController:
 
         html =  ''' <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" name="dropDown1">'''
-        html +=         urllib.unquote(currentVoice) + '''<span class="caret"></span></button>
+        html +=         urllib.parse.unquote(currentVoice) + '''<span class="caret"></span></button>
                         <ul class="dropdown-menu">'''
         for entry in availableVoices:
             html +=     '<li><a href="#">' + femMal[entry[1]]  + entry[0] + '</a></li>'
@@ -464,13 +464,13 @@ class LEDController:
     def getStringCutOffCorVal(self, string):
         notASCIICounter = 0
         cutOffCor = 0
-        for i in range(0,9):
+        for i in range(0, 9):
             try:
-                string[i].decode('ascii')
-            except:
+                string[i].encode('ascii')
+            except (UnicodeEncodeError, IndexError):
                 notASCIICounter += 1
-        tmp = notASCIICounter%3
-        cutOffCor = 3-tmp if tmp>0 else tmp
+        tmp = notASCIICounter % 3
+        cutOffCor = 3 - tmp if tmp > 0 else tmp
         return cutOffCor
 
     def getScriptNames(self):
@@ -485,14 +485,14 @@ class LEDController:
         # settings contains the current ScriptSettings.json data
         settings = self.getScriptSettings()
         for arg in self.argList:
-            if arg is not "":
+            if arg != "":
                 key, value = arg.split('=')
                 key = key.lower()
                 for ent in keyList:
                     if key == ent:
                         # only accept the new settings string
                         # if it really is one of the scriptNames
-                        if urllib.unquote(value) in scriptNames:
+                        if urllib.parse.unquote(value) in scriptNames:
                             settings[ent] = value
         with open('/var/lib/crystal-signal/ScriptSettings.json', 'w+') as outfile:
                 json.dump(settings, outfile)
@@ -568,7 +568,7 @@ class LEDController:
         # settings contains the current Settings.json data
         settings = self.getSettings()
         for arg in self.argList:
-            if arg is not "":
+            if arg != "":
                 key, value = arg.split('=')
                 key = key.lower()
                 for ent in keyList:
@@ -581,18 +581,11 @@ class LEDController:
                                 # throw away the "woman:" part in front of the entry
                                 _, val = value.split(':')
                                 # decode '%20' to ' ' and throw away leading spaces
-                                settings[ent + '_' + self.getLanguageSetting()] = urllib.unquote(val).lstrip(' ')
+                                settings[ent + '_' + self.getLanguageSetting()] = urllib.parse.unquote(val).lstrip(' ')
                             else:
                                 settings[ent] = value
         with open(path, 'w+') as outfile:
             json.dump(settings, outfile)
-
-# - - - - - - - - - - - - - - - - -
-# - SETTING UP SYS FOR UNICODE  - -
-# - - - - - - - - - - - - - - - - -
-# This is necessary to handle unicode characters in strings.
-reload(sys)  
-sys.setdefaultencoding('utf8')
 
 # - - - - - - - - - - - - - - - - -
 # SETTING UP SOCKET & CONTROLLER  -
